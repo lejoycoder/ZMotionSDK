@@ -1,9 +1,9 @@
-
 using System;
 using System.Windows.Media;
 using System.Windows.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using MaterialDesignThemes.Wpf;
+using ZMotionTest.Models;
 using ZMotionTest.Services;
 
 namespace ZMotionTest.ViewModels;
@@ -18,81 +18,61 @@ public partial class MainWindowViewModel : ObservableObject
     public MainWindowViewModel()
     {
         _zMotionManager = ZMotionManager.Instance;
-        
-        // 启动时间更新定时器
         StartTimeUpdater();
-        
-        // 初始化连接状态
-        UpdateConnectionStatus(false);
+        UpdateConnectionStatus(_zMotionManager.IsConnected);
     }
 
-    #region 属性
-    
+    [ObservableProperty]
+    private UiConnectionStateModel connectionStateModel = UiConnectionStateModel.Disconnected();
+
+    [ObservableProperty]
+    private UiOperationStateModel operationStateModel = UiOperationStateModel.Create(UiStatusLevel.Info, "就绪");
+
+    [ObservableProperty]
+    private string currentPageTitle = "连接管理";
+
     [ObservableProperty]
     private string connectionStatus = "未连接";
-    
+
     [ObservableProperty]
     private PackIconKind connectionIconKind = PackIconKind.CloseNetworkOutline;
-    
+
     [ObservableProperty]
-    private Brush connectionStatusColor = Brushes.Red;
-    
+    private Brush connectionStatusColor = Brushes.IndianRed;
+
     [ObservableProperty]
-    private Brush connectionIconColor = Brushes.Red;
-    
+    private Brush connectionIconColor = Brushes.IndianRed;
+
     [ObservableProperty]
     private string statusText = "就绪";
-    
+
     [ObservableProperty]
     private string timeText = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
 
-    #endregion
-    
-    #region 方法
-    
-    /// <summary>
-    /// 更新连接状态
-    /// </summary>
-    /// <param name="isConnected">是否已连接</param>
     public void UpdateConnectionStatus(bool isConnected)
     {
-        if (isConnected)
-        {
-            ConnectionStatus = "已连接";
-            ConnectionIconKind = PackIconKind.Connection;
-            ConnectionStatusColor = Brushes.Green;
-            ConnectionIconColor = Brushes.Green;
-        }
-        else
-        {
-            ConnectionStatus = "未连接";
-            ConnectionIconKind = PackIconKind.CloseNetworkOutline;
-            ConnectionStatusColor = Brushes.Red;
-            ConnectionIconColor = Brushes.Red;
-        }
+        ConnectionStateModel = isConnected ? UiConnectionStateModel.Connected() : UiConnectionStateModel.Disconnected();
+
+        ConnectionStatus = ConnectionStateModel.Text;
+        ConnectionIconKind = ConnectionStateModel.IconKind;
+        ConnectionStatusColor = ConnectionStateModel.Brush;
+        ConnectionIconColor = ConnectionStateModel.Brush;
     }
-    
-    /// <summary>
-    /// 更新状态文本
-    /// </summary>
-    /// <param name="status">状态文本</param>
+
     public void UpdateStatus(string status)
     {
-        StatusText = status;
+        OperationStateModel = UiOperationStateModel.Create(UiStatusLevel.Info, status);
+        StatusText = OperationStateModel.Message;
     }
-    
-    /// <summary>
-    /// 启动时间更新定时器
-    /// </summary>
+
     private void StartTimeUpdater()
     {
         var timer = new DispatcherTimer
         {
             Interval = TimeSpan.FromSeconds(1)
         };
-        timer.Tick += (s, e) => TimeText = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
+        timer.Tick += (_, _) => TimeText = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
         timer.Start();
     }
-    
-    #endregion
-} 
+}

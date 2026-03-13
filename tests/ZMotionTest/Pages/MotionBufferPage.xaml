@@ -1,4 +1,4 @@
-﻿<Page
+<Page
     x:Class="ZMotionTest.Pages.MotionBufferPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -24,7 +24,7 @@
             <StackPanel Grid.Column="0">
 
                 <!--  轴选择  -->
-                <materialDesign:Card Margin="0,0,0,16" Padding="16">
+                <materialDesign:Card Style="{DynamicResource ZMCardStyle}" Margin="0,0,0,16" Padding="16">
                     <StackPanel>
                         <TextBlock
                             Margin="0,0,0,16"
@@ -43,22 +43,22 @@
                                 materialDesign:HintAssist.Hint="选择轴"
                                 ItemsSource="{Binding AxisList}"
                                 SelectedIndex="{Binding SelectedAxisIndex}"
-                                Style="{DynamicResource MaterialDesignFloatingHintComboBox}" />
+                                Style="{DynamicResource ZMComboBoxStyle}" />
 
                             <StackPanel Grid.Row="2" Orientation="Horizontal">
-                                <materialDesign:Chip
+                                <materialDesign:Chip Style="{DynamicResource ZMChipStyle}"
                                     Margin="0,0,8,0"
                                     Content="{Binding IsAxisRunning, StringFormat='运行状态: {0}'}"
                                     Icon="{materialDesign:PackIcon Kind=Play}" />
 
-                                <materialDesign:Chip Content="{Binding IsAxisEnabled, StringFormat='使能状态: {0}'}" Icon="{materialDesign:PackIcon Kind=Power}" />
+                                <materialDesign:Chip Style="{DynamicResource ZMChipStyle}" Content="{Binding IsAxisEnabled, StringFormat='使能状态: {0}'}" Icon="{materialDesign:PackIcon Kind=Power}" />
                             </StackPanel>
                         </Grid>
                     </StackPanel>
                 </materialDesign:Card>
 
                 <!--  缓存状态监控  -->
-                <materialDesign:Card Margin="0,0,0,16" Padding="16">
+                <materialDesign:Card Style="{DynamicResource ZMCardStyle}" Margin="0,0,0,16" Padding="16">
                     <StackPanel>
                         <TextBlock
                             Margin="0,0,0,16"
@@ -86,7 +86,7 @@
                                 Grid.Column="0"
                                 materialDesign:HintAssist.Hint="缓存移动数量"
                                 IsReadOnly="True"
-                                Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+                                Style="{DynamicResource ZMTextBoxStyle}"
                                 Text="{Binding MovesBuffered}" />
 
                             <TextBox
@@ -94,7 +94,7 @@
                                 Grid.Column="2"
                                 materialDesign:HintAssist.Hint="是否有缓存"
                                 IsReadOnly="True"
-                                Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+                                Style="{DynamicResource ZMTextBoxStyle}"
                                 Text="{Binding HasBufferMovement}" />
 
                             <TextBox
@@ -102,7 +102,7 @@
                                 Grid.Column="0"
                                 materialDesign:HintAssist.Hint="当前移动标记"
                                 IsReadOnly="True"
-                                Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+                                Style="{DynamicResource ZMTextBoxStyle}"
                                 Text="{Binding CurrentMoveMark}" />
 
                             <TextBox
@@ -110,7 +110,7 @@
                                 Grid.Column="2"
                                 materialDesign:HintAssist.Hint="剩余缓存数量"
                                 IsReadOnly="True"
-                                Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+                                Style="{DynamicResource ZMTextBoxStyle}"
                                 Text="{Binding RemainBuffer}" />
 
                             <TextBox
@@ -118,7 +118,7 @@
                                 Grid.Column="0"
                                 materialDesign:HintAssist.Hint="剩余直线缓存"
                                 IsReadOnly="True"
-                                Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+                                Style="{DynamicResource ZMTextBoxStyle}"
                                 Text="{Binding RemainLineBuffer}" />
 
                             <TextBox
@@ -126,7 +126,7 @@
                                 Grid.Column="2"
                                 materialDesign:HintAssist.Hint="向量缓存距离"
                                 IsReadOnly="True"
-                                Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+                                Style="{DynamicResource ZMTextBoxStyle}"
                                 Text="{Binding VectorBuffered, StringFormat='F3'}" />
 
                             <Button
@@ -135,13 +135,13 @@
                                 materialDesign:ButtonAssist.CornerRadius="4"
                                 Command="{Binding RefreshBufferStatusCommand}"
                                 Content="刷新缓存状态"
-                                Style="{DynamicResource MaterialDesignRaisedButton}" />
+                                Style="{DynamicResource ZMPrimaryButtonStyle}" />
                         </Grid>
                     </StackPanel>
                 </materialDesign:Card>
 
                 <!--  缓存控制操作  -->
-                <materialDesign:Card Padding="16">
+                <materialDesign:Card Style="{DynamicResource ZMCardStyle}" Padding="16">
                     <StackPanel>
                         <TextBlock
                             Margin="0,0,0,16"
@@ -166,7 +166,7 @@
                                 materialDesign:ButtonAssist.CornerRadius="4"
                                 Command="{Binding ClearBufferCommand}"
                                 Content="清空缓存"
-                                Style="{DynamicResource MaterialDesignRaisedButton}" />
+                                Style="{DynamicResource ZMPrimaryButtonStyle}" />
 
                             <Button
                                 Grid.Row="0"
@@ -174,7 +174,7 @@
                                 materialDesign:ButtonAssist.CornerRadius="4"
                                 Command="{Binding PauseAxisCommand}"
                                 Content="暂停轴运动"
-                                Style="{DynamicResource MaterialDesignRaisedButton}" />
+                                Style="{DynamicResource ZMPrimaryButtonStyle}" />
 
                             <Button
                                 Grid.Row="2"
@@ -182,7 +182,7 @@
                                 materialDesign:ButtonAssist.CornerRadius="4"
                                 Command="{Binding ResumeAxisCommand}"
                                 Content="恢复轴运动"
-                                Style="{DynamicResource MaterialDesignRaisedButton}" />
+                                Style="{DynamicResource ZMPrimaryButtonStyle}" />
 
                             <Button
                                 Grid.Row="2"
@@ -192,7 +192,7 @@
                                 BorderBrush="{DynamicResource MaterialDesignValidationErrorBrush}"
                                 Command="{Binding StopAxisCommand}"
                                 Content="停止轴运动"
-                                Style="{DynamicResource MaterialDesignRaisedButton}" />
+                                Style="{DynamicResource ZMPrimaryButtonStyle}" />
                         </Grid>
                     </StackPanel>
                 </materialDesign:Card>
@@ -202,7 +202,7 @@
             <StackPanel Grid.Column="2">
 
                 <!--  基本缓存运动  -->
-                <materialDesign:Card Margin="0,0,0,16" Padding="16">
+                <materialDesign:Card Style="{DynamicResource ZMCardStyle}" Margin="0,0,0,16" Padding="16">
                     <StackPanel>
                         <TextBlock
                             Margin="0,0,0,16"
@@ -229,28 +229,28 @@
                                 Grid.Row="0"
                                 Grid.Column="0"
                                 materialDesign:HintAssist.Hint="移动距离1"
-                                Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+                                Style="{DynamicResource ZMTextBoxStyle}"
                                 Text="{Binding MoveDistance1, UpdateSourceTrigger=PropertyChanged}" />
 
                             <TextBox
                                 Grid.Row="0"
                                 Grid.Column="2"
                                 materialDesign:HintAssist.Hint="移动距离2"
-                                Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+                                Style="{DynamicResource ZMTextBoxStyle}"
                                 Text="{Binding MoveDistance2, UpdateSourceTrigger=PropertyChanged}" />
 
                             <TextBox
                                 Grid.Row="2"
                                 Grid.Column="0"
                                 materialDesign:HintAssist.Hint="移动距离3"
-                                Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+                                Style="{DynamicResource ZMTextBoxStyle}"
                                 Text="{Binding MoveDistance3, UpdateSourceTrigger=PropertyChanged}" />
 
                             <TextBox
                                 Grid.Row="2"
                                 Grid.Column="2"
                                 materialDesign:HintAssist.Hint="移动标记"
-                                Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+                                Style="{DynamicResource ZMTextBoxStyle}"
                                 Text="{Binding MoveMark, UpdateSourceTrigger=PropertyChanged}" />
 
                             <Button
@@ -259,7 +259,7 @@
                                 materialDesign:ButtonAssist.CornerRadius="4"
                                 Command="{Binding AddSingleMoveCommand}"
                                 Content="添加单次移动"
-                                Style="{DynamicResource MaterialDesignRaisedButton}" />
+                                Style="{DynamicResource ZMPrimaryButtonStyle}" />
 
                             <Button
                                 Grid.Row="4"
@@ -267,7 +267,7 @@
                                 materialDesign:ButtonAssist.CornerRadius="4"
                                 Command="{Binding AddSequenceMoveCommand}"
                                 Content="添加多段移动"
-                                Style="{DynamicResource MaterialDesignRaisedButton}" />
+                                Style="{DynamicResource ZMPrimaryButtonStyle}" />
 
                             <Button
                                 Grid.Row="6"
@@ -276,13 +276,13 @@
                                 materialDesign:ButtonAssist.CornerRadius="4"
                                 Command="{Binding SetMoveMarkCommand}"
                                 Content="设置移动标记"
-                                Style="{DynamicResource MaterialDesignOutlinedButton}" />
+                                Style="{DynamicResource ZMSecondaryButtonStyle}" />
                         </Grid>
                     </StackPanel>
                 </materialDesign:Card>
 
                 <!--  缓存IO控制  -->
-                <materialDesign:Card Margin="0,0,0,16" Padding="16">
+                <materialDesign:Card Style="{DynamicResource ZMCardStyle}" Margin="0,0,0,16" Padding="16">
                     <StackPanel>
                         <TextBlock
                             Margin="0,0,0,16"
@@ -307,7 +307,7 @@
                                 Grid.Row="0"
                                 Grid.Column="0"
                                 materialDesign:HintAssist.Hint="输出端口号"
-                                Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+                                Style="{DynamicResource ZMTextBoxStyle}"
                                 Text="{Binding OutputPort, UpdateSourceTrigger=PropertyChanged}" />
 
                             <ComboBox
@@ -315,7 +315,7 @@
                                 Grid.Column="2"
                                 materialDesign:HintAssist.Hint="输出状态"
                                 SelectedIndex="{Binding OutputState}"
-                                Style="{DynamicResource MaterialDesignFloatingHintComboBox}">
+                                Style="{DynamicResource ZMComboBoxStyle}">
                                 <ComboBoxItem Content="关闭(0)" />
                                 <ComboBoxItem Content="打开(1)" />
                             </ComboBox>
@@ -324,7 +324,7 @@
                                 Grid.Row="2"
                                 Grid.Column="0"
                                 materialDesign:HintAssist.Hint="延时时间(ms)"
-                                Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+                                Style="{DynamicResource ZMTextBoxStyle}"
                                 Text="{Binding DelayTime, UpdateSourceTrigger=PropertyChanged}" />
 
                             <Button
@@ -333,7 +333,7 @@
                                 materialDesign:ButtonAssist.CornerRadius="4"
                                 Command="{Binding AddMoveOpCommand}"
                                 Content="添加IO控制"
-                                Style="{DynamicResource MaterialDesignRaisedButton}" />
+                                Style="{DynamicResource ZMPrimaryButtonStyle}" />
 
                             <Button
                                 Grid.Row="4"
@@ -341,19 +341,19 @@
                                 materialDesign:ButtonAssist.CornerRadius="4"
                                 Command="{Binding AddMoveDelayCommand}"
                                 Content="添加延时"
-                                Style="{DynamicResource MaterialDesignRaisedButton}" />
+                                Style="{DynamicResource ZMPrimaryButtonStyle}" />
                         </Grid>
                     </StackPanel>
                 </materialDesign:Card>
 
                 <!--  自定义缓存命令  -->
-                <materialDesign:Card Padding="16">
+                <materialDesign:Card Style="{DynamicResource ZMCardStyle}" Padding="16">
                     <Button
                         Margin="0,16,0,0"
                         materialDesign:ButtonAssist.CornerRadius="4"
                         Command="{Binding ExecuteCustomCommandCommand}"
                         Content="执行自定义命令"
-                        Style="{DynamicResource MaterialDesignRaisedButton}" />
+                        Style="{DynamicResource ZMPrimaryButtonStyle}" />
                 </materialDesign:Card>
             </StackPanel>
 
@@ -361,7 +361,7 @@
             <StackPanel Grid.Column="4">
 
                 <!--  实时状态  -->
-                <materialDesign:Card Margin="0,0,0,16" Padding="16">
+                <materialDesign:Card Style="{DynamicResource ZMCardStyle}" Margin="0,0,0,16" Padding="16">
                     <StackPanel>
                         <TextBlock
                             Margin="0,0,0,16"
@@ -383,35 +383,35 @@
                                 Grid.Row="0"
                                 materialDesign:HintAssist.Hint="当前位置(DPOS)"
                                 IsReadOnly="True"
-                                Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+                                Style="{DynamicResource ZMTextBoxStyle}"
                                 Text="{Binding CurrentDPosition, StringFormat='F3'}" />
 
                             <TextBox
                                 Grid.Row="2"
                                 materialDesign:HintAssist.Hint="反馈位置(MPOS)"
                                 IsReadOnly="True"
-                                Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+                                Style="{DynamicResource ZMTextBoxStyle}"
                                 Text="{Binding CurrentMPosition, StringFormat='F3'}" />
 
                             <TextBox
                                 Grid.Row="4"
                                 materialDesign:HintAssist.Hint="当前速度"
                                 IsReadOnly="True"
-                                Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+                                Style="{DynamicResource ZMTextBoxStyle}"
                                 Text="{Binding CurrentSpeed, StringFormat='F3'}" />
 
                             <TextBox
                                 Grid.Row="6"
                                 materialDesign:HintAssist.Hint="剩余距离"
                                 IsReadOnly="True"
-                                Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+                                Style="{DynamicResource ZMTextBoxStyle}"
                                 Text="{Binding RemainDistance, StringFormat='F3'}" />
                         </Grid>
                     </StackPanel>
                 </materialDesign:Card>
 
                 <!--  缓存队列信息  -->
-                <materialDesign:Card Margin="0,0,0,16" Padding="16">
+                <materialDesign:Card Style="{DynamicResource ZMCardStyle}" Margin="0,0,0,16" Padding="16">
                     <StackPanel>
                         <TextBlock
                             Margin="0,0,0,16"
@@ -445,12 +445,12 @@
                             materialDesign:ButtonAssist.CornerRadius="4"
                             Command="{Binding ClearQueueLogCommand}"
                             Content="清空队列日志"
-                            Style="{DynamicResource MaterialDesignOutlinedButton}" />
+                            Style="{DynamicResource ZMSecondaryButtonStyle}" />
                     </StackPanel>
                 </materialDesign:Card>
 
                 <!--  操作日志  -->
-                <materialDesign:Card Padding="16">
+                <materialDesign:Card Style="{DynamicResource ZMCardStyle}" Padding="16">
                     <StackPanel>
                         <TextBlock
                             Margin="0,0,0,16"
@@ -470,10 +470,11 @@
                             materialDesign:ButtonAssist.CornerRadius="4"
                             Command="{Binding ClearLogCommand}"
                             Content="清空日志"
-                            Style="{DynamicResource MaterialDesignOutlinedButton}" />
+                            Style="{DynamicResource ZMSecondaryButtonStyle}" />
                     </StackPanel>
                 </materialDesign:Card>
             </StackPanel>
         </Grid>
     </ScrollViewer>
 </Page> 
+

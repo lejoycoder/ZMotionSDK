@@ -1,5 +1,10 @@
 # ZMotionTest 测试应用说明
 
+## UI 风格规范
+
+- 统一 UI 风格文档：`doc/UI_STYLE_GUIDE.md`
+- 本项目页面改造、新增页面设计、状态语义与控件样式请优先遵循该文档。
+
 ## 项目概述
 
 ZMotionTest是ZMotionSDK的WPF测试应用程序，用于测试和验证ZMotion运动控制器的各项功能。

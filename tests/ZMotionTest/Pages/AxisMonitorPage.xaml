@@ -16,7 +16,7 @@
         </Grid.RowDefinitions>
 
         <!-- 轴选择和控制 -->
-        <materialDesign:Card Grid.Row="0" Margin="0,0,0,16" Padding="16">
+        <materialDesign:Card Style="{DynamicResource ZMCardStyle}" Grid.Row="0" Margin="0,0,0,16" Padding="16">
             <StackPanel>
                 <TextBlock Text="轴状态监控" Style="{DynamicResource MaterialDesignHeadline6TextBlock}" Margin="0,0,0,16"/>
                 
@@ -32,18 +32,18 @@
                     <TextBox x:Name="AxisCountTextBox" 
                              materialDesign:HintAssist.Hint="监控轴数量"
                              Text="{Binding AxisCount, UpdateSourceTrigger=PropertyChanged}" Grid.Column="0"
-                             Style="{DynamicResource MaterialDesignFloatingHintTextBox}"/>
+                             Style="{DynamicResource ZMTextBoxStyle}"/>
                     
                     <Button x:Name="StartMonitorButton" 
                             Content="开始监控" Grid.Column="2"
-                            Style="{DynamicResource MaterialDesignRaisedButton}"
+                            Style="{DynamicResource ZMPrimaryButtonStyle}"
                             materialDesign:ButtonAssist.CornerRadius="4"
                             IsEnabled="{Binding IsMonitoring, Converter={StaticResource InverseBooleanConverter}}"
                             Command="{Binding StartMonitorCommand}"/>
                     
                     <Button x:Name="StopMonitorButton" 
                             Content="停止监控" Grid.Column="4"
-                            Style="{DynamicResource MaterialDesignOutlinedButton}"
+                            Style="{DynamicResource ZMSecondaryButtonStyle}"
                             materialDesign:ButtonAssist.CornerRadius="4"
                             Command="{Binding StopMonitorCommand}" 
                             IsEnabled="{Binding IsMonitoring}"/>
@@ -52,7 +52,7 @@
         </materialDesign:Card>
 
         <!-- 轴状态显示 -->
-        <materialDesign:Card Grid.Row="1" Padding="16">
+        <materialDesign:Card Style="{DynamicResource ZMCardStyle}" Grid.Row="1" Padding="16">
             <DataGrid x:Name="AxisStatusDataGrid" 
                       AutoGenerateColumns="False"
                       CanUserAddRows="False"
@@ -73,16 +73,16 @@
         </materialDesign:Card>
 
         <!-- 刷新控制 -->
-        <materialDesign:Card Grid.Row="2" Margin="0,16,0,0" Padding="16">
+        <materialDesign:Card Style="{DynamicResource ZMCardStyle}" Grid.Row="2" Margin="0,16,0,0" Padding="16">
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="刷新间隔:" VerticalAlignment="Center" Margin="0,0,8,0"/>
                 <TextBox x:Name="RefreshIntervalTextBox" 
                          Text="{Binding RefreshInterval, UpdateSourceTrigger=PropertyChanged}" Width="80"
                          materialDesign:HintAssist.Hint="ms"
-                         Style="{DynamicResource MaterialDesignFloatingHintTextBox}"/>
+                         Style="{DynamicResource ZMTextBoxStyle}"/>
                 <Button x:Name="RefreshOnceButton" 
                         Content="立即刷新" 
-                        Style="{DynamicResource MaterialDesignOutlinedButton}"
+                        Style="{DynamicResource ZMSecondaryButtonStyle}"
                         materialDesign:ButtonAssist.CornerRadius="4"
                         Command="{Binding RefreshOnceCommand}"
                         Margin="16,0,0,0"/>
@@ -90,3 +90,4 @@
         </materialDesign:Card>
     </Grid>
 </Page> 
+

@@ -1,9 +1,8 @@
-﻿<Page
+<Page
     x:Class="ZMotionTest.Pages.IOControlPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:converters="clr-namespace:ZMotionTest.Converters"
-    xmlns:customControl="clr-namespace:WPFProject.ShareControls;assembly=WPFProject.ShareControls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -31,24 +30,41 @@
             <Setter Property="BorderBrush" Value="Gray" />
             <Style.Triggers>
                 <DataTrigger Binding="{Binding IsActive}" Value="True">
-                    <Setter Property="Background" Value="#4CAF50" />
-                    <Setter Property="BorderBrush" Value="#388E3C" />
+                    <Setter Property="Background" Value="{DynamicResource ZMStatusSuccessBrush}" />
+                    <Setter Property="BorderBrush" Value="{DynamicResource ZMStatusSuccessBrush}" />
                 </DataTrigger>
                 <DataTrigger Binding="{Binding IsActive}" Value="False">
-                    <Setter Property="Background" Value="#F5F5F5" />
-                    <Setter Property="BorderBrush" Value="#BDBDBD" />
+                    <Setter Property="Background" Value="#FF2A3446" />
+                    <Setter Property="BorderBrush" Value="#FF586885" />
                 </DataTrigger>
             </Style.Triggers>
         </Style>
 
         <!--  状态面板样式  -->
         <Style x:Key="StatusPanelStyle" TargetType="Border">
-            <Setter Property="Background" Value="#E3F2FD" />
-            <Setter Property="BorderBrush" Value="#2196F3" />
+            <Setter Property="Background" Value="{DynamicResource ZMStatusInfoSoftBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ZMStatusInfoBrush}" />
             <Setter Property="BorderThickness" Value="1" />
             <Setter Property="CornerRadius" Value="4" />
             <Setter Property="Padding" Value="8" />
             <Setter Property="Margin" Value="0,0,0,8" />
+        </Style>
+
+        <!--  协议状态徽标样式  -->
+        <Style x:Key="ProtocolStatusBadgeStyle" TargetType="Border">
+            <Setter Property="CornerRadius" Value="10" />
+            <Setter Property="Padding" Value="8,2" />
+            <Setter Property="HorizontalAlignment" Value="Right" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Background" Value="{DynamicResource ZMStatusDangerSoftBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ZMStatusDangerBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Status}" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource ZMStatusSuccessSoftBrush}" />
+                    <Setter Property="BorderBrush" Value="{DynamicResource ZMStatusSuccessBrush}" />
+                </DataTrigger>
+            </Style.Triggers>
         </Style>
     </Page.Resources>
 
@@ -73,12 +89,9 @@
                         </Grid.ColumnDefinitions>
 
                         <!--  数字输入  -->
-                        <materialDesign:Card Grid.Column="0" Padding="16">
+                        <materialDesign:Card Grid.Column="0" Padding="16" Style="{DynamicResource ZMCardStyle}">
                             <StackPanel>
-                                <TextBlock
-                                    Margin="0,0,0,12"
-                                    Style="{DynamicResource MaterialDesignHeadline6TextBlock}"
-                                    Text="数字输入(DI)" />
+                                <TextBlock Margin="0,0,0,12" Style="{DynamicResource MaterialDesignHeadline6TextBlock}" Text="数字输入(DI)" />
 
                                 <Grid Margin="0,0,0,12">
                                     <Grid.ColumnDefinitions>
@@ -90,7 +103,7 @@
                                     <TextBox
                                         Grid.Column="0"
                                         materialDesign:HintAssist.Hint="DI数量"
-                                        Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+                                        Style="{DynamicResource ZMTextBoxStyle}"
                                         Text="{Binding DICount, UpdateSourceTrigger=PropertyChanged}" />
 
                                     <Button
@@ -98,7 +111,7 @@
                                         materialDesign:ButtonAssist.CornerRadius="4"
                                         Command="{Binding RefreshDICommand}"
                                         Content="刷新"
-                                        Style="{DynamicResource MaterialDesignRaisedButton}" />
+                                        Style="{DynamicResource ZMPrimaryButtonStyle}" />
                                 </Grid>
 
                                 <DataGrid
@@ -111,10 +124,7 @@
                                     IsReadOnly="True"
                                     ItemsSource="{Binding DIList}">
                                     <DataGrid.Columns>
-                                        <DataGridTextColumn
-                                            Width="60"
-                                            Binding="{Binding Index}"
-                                            Header="索引" />
+                                        <DataGridTextColumn Width="60" Binding="{Binding Index}" Header="索引" />
                                         <DataGridTemplateColumn Width="60" Header="状态">
                                             <DataGridTemplateColumn.CellTemplate>
                                                 <DataTemplate>
@@ -129,22 +139,16 @@
                                                 </DataTemplate>
                                             </DataGridTemplateColumn.CellTemplate>
                                         </DataGridTemplateColumn>
-                                        <DataGridTextColumn
-                                            Width="*"
-                                            Binding="{Binding Description}"
-                                            Header="描述" />
+                                        <DataGridTextColumn Width="*" Binding="{Binding Description}" Header="描述" />
                                     </DataGrid.Columns>
                                 </DataGrid>
                             </StackPanel>
                         </materialDesign:Card>
 
                         <!--  数字输出  -->
-                        <materialDesign:Card Grid.Column="2" Padding="16">
+                        <materialDesign:Card Grid.Column="2" Padding="16" Style="{DynamicResource ZMCardStyle}">
                             <StackPanel>
-                                <TextBlock
-                                    Margin="0,0,0,12"
-                                    Style="{DynamicResource MaterialDesignHeadline6TextBlock}"
-                                    Text="数字输出(DO)" />
+                                <TextBlock Margin="0,0,0,12" Style="{DynamicResource MaterialDesignHeadline6TextBlock}" Text="数字输出(DO)" />
 
                                 <Grid Margin="0,0,0,12">
                                     <Grid.ColumnDefinitions>
@@ -156,7 +160,7 @@
                                     <TextBox
                                         Grid.Column="0"
                                         materialDesign:HintAssist.Hint="DO数量"
-                                        Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+                                        Style="{DynamicResource ZMTextBoxStyle}"
                                         Text="{Binding DOCount, UpdateSourceTrigger=PropertyChanged}" />
 
                                     <Button
@@ -164,7 +168,7 @@
                                         materialDesign:ButtonAssist.CornerRadius="4"
                                         Command="{Binding RefreshDOCommand}"
                                         Content="刷新"
-                                        Style="{DynamicResource MaterialDesignRaisedButton}" />
+                                        Style="{DynamicResource ZMPrimaryButtonStyle}" />
                                 </Grid>
 
                                 <DataGrid
@@ -176,10 +180,7 @@
                                     CanUserDeleteRows="False"
                                     ItemsSource="{Binding DOList}">
                                     <DataGrid.Columns>
-                                        <DataGridTextColumn
-                                            Width="60"
-                                            Binding="{Binding Index}"
-                                            Header="索引" />
+                                        <DataGridTextColumn Width="60" Binding="{Binding Index}" Header="索引" />
                                         <DataGridTemplateColumn Width="60" Header="状态">
                                             <DataGridTemplateColumn.CellTemplate>
                                                 <DataTemplate>
@@ -187,10 +188,7 @@
                                                 </DataTemplate>
                                             </DataGridTemplateColumn.CellTemplate>
                                         </DataGridTemplateColumn>
-                                        <DataGridTextColumn
-                                            Width="*"
-                                            Binding="{Binding Description}"
-                                            Header="描述" />
+                                        <DataGridTextColumn Width="*" Binding="{Binding Description}" Header="描述" />
                                     </DataGrid.Columns>
                                 </DataGrid>
                             </StackPanel>
@@ -201,71 +199,149 @@
 
                 <!--  单个IO测试  -->
                 <TabItem Header="IO协议测试">
-                    <Grid>
+                    <Grid Margin="16">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
+                            <RowDefinition Height="12" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="12" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition />
-                            <ColumnDefinition />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="16" />
+                            <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
                         <materialDesign:Card
                             Grid.Row="0"
                             Grid.Column="0"
-                            Grid.ColumnSpan="2"
-                            Padding="16">
-                            <UniformGrid Columns="6">
-                                <UniformGrid.Resources>
-                                    <Style BasedOn="{StaticResource MaterialDesignRaisedButton}" TargetType="Button">
-                                        <Setter Property="Margin" Value="5" />
+                            Grid.ColumnSpan="3"
+                            Padding="16"
+                            Style="{DynamicResource ZMCardStyle}">
+                            <WrapPanel>
+                                <WrapPanel.Resources>
+                                    <Style BasedOn="{StaticResource ZMPrimaryButtonStyle}" TargetType="Button">
+                                        <Setter Property="Margin" Value="4" />
                                     </Style>
-                                </UniformGrid.Resources>
+                                </WrapPanel.Resources>
                                 <Button Command="{Binding ReadCompleteProtocolsCommand}" Content="读取协议" />
                                 <Button Command="{Binding WriteCompleteProtocolCommand}" Content="写入协议" />
                                 <Button Command="{Binding TestExpressionReadCommand}" Content="表达式读取" />
                                 <Button Command="{Binding TestExpressionWriteCommand}" Content="表达式写入" />
                                 <Button Command="{Binding CreateWriteMappingCommand}" Content="创建写入映射" />
                                 <Button Command="{Binding TestAddressReadWriteCommand}" Content="测试地址读写" />
-                            </UniformGrid>
+                            </WrapPanel>
                         </materialDesign:Card>
 
-                        <ScrollViewer
-                            Grid.Row="1"
-                            Grid.Column="1"
-                            VerticalAlignment="Top">
-                            <ItemsControl ItemsSource="{Binding WriteDataStatuses}">
-                                <ItemsControl.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <UniformGrid Columns="2" />
-                                    </ItemsPanelTemplate>
-                                </ItemsControl.ItemsPanel>
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <customControl:DataStatusControl Height="60" />
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                        </ScrollViewer>
-
-                        <ScrollViewer
-                            Grid.Row="1"
+                        <materialDesign:Card
+                            Grid.Row="2"
                             Grid.Column="0"
-                            VerticalAlignment="Top">
-                            <ItemsControl ItemsSource="{Binding ReadDataStatuses}">
-                                <ItemsControl.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <UniformGrid Columns="2" />
-                                    </ItemsPanelTemplate>
-                                </ItemsControl.ItemsPanel>
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <customControl:DataStatusControl Height="60" />
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                        </ScrollViewer>
+                            Grid.ColumnSpan="3"
+                            Padding="12"
+                            Style="{DynamicResource ZMCardStyle}">
+                            <TextBlock Text="{Binding ExpressionTestResult}" TextWrapping="Wrap" />
+                        </materialDesign:Card>
+
+                        <materialDesign:Card
+                            Grid.Row="4"
+                            Grid.Column="0"
+                            Padding="12"
+                            Style="{DynamicResource ZMCardStyle}">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
+                                <TextBlock Margin="0,0,0,8" Style="{DynamicResource MaterialDesignSubtitle1TextBlock}" Text="读取状态 (DI)" />
+                                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                                    <ItemsControl ItemsSource="{Binding ReadDataStatuses}">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <WrapPanel />
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <materialDesign:Card
+                                                    Width="230"
+                                                    Margin="4"
+                                                    Padding="10"
+                                                    Style="{DynamicResource ZMCardStyle}">
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="*" />
+                                                            <ColumnDefinition Width="Auto" />
+                                                        </Grid.ColumnDefinitions>
+                                                        <StackPanel>
+                                                            <TextBlock FontWeight="SemiBold" Text="{Binding Name}" />
+                                                            <TextBlock FontSize="11" Opacity="0.7" Text="{Binding DisplayAddress, StringFormat=地址: {0}}" />
+                                                        </StackPanel>
+                                                        <Border Grid.Column="1" Style="{StaticResource ProtocolStatusBadgeStyle}">
+                                                            <TextBlock FontWeight="SemiBold" Text="{Binding StatusText}" />
+                                                        </Border>
+                                                    </Grid>
+                                                </materialDesign:Card>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </ScrollViewer>
+                            </Grid>
+                        </materialDesign:Card>
+
+                        <materialDesign:Card
+                            Grid.Row="4"
+                            Grid.Column="2"
+                            Padding="12"
+                            Style="{DynamicResource ZMCardStyle}">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
+                                <TextBlock Margin="0,0,0,8" Style="{DynamicResource MaterialDesignSubtitle1TextBlock}" Text="写入状态 (DO)" />
+                                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                                    <ItemsControl ItemsSource="{Binding WriteDataStatuses}">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <WrapPanel />
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <materialDesign:Card
+                                                    Width="250"
+                                                    Margin="4"
+                                                    Padding="10"
+                                                    Style="{DynamicResource ZMCardStyle}">
+                                                    <StackPanel>
+                                                        <Grid>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="*" />
+                                                                <ColumnDefinition Width="Auto" />
+                                                            </Grid.ColumnDefinitions>
+                                                            <StackPanel>
+                                                                <TextBlock FontWeight="SemiBold" Text="{Binding Name}" />
+                                                                <TextBlock FontSize="11" Opacity="0.7" Text="{Binding DisplayAddress, StringFormat=地址: {0}}" />
+                                                            </StackPanel>
+                                                            <Border Grid.Column="1" Style="{StaticResource ProtocolStatusBadgeStyle}">
+                                                                <TextBlock FontWeight="SemiBold" Text="{Binding StatusText}" />
+                                                            </Border>
+                                                        </Grid>
+                                                        <Button
+                                                            Margin="0,8,0,0"
+                                                            Command="{Binding Command}"
+                                                            CommandParameter="{Binding}"
+                                                            Content="{Binding ActionText}"
+                                                            Style="{DynamicResource ZMSecondaryButtonStyle}" />
+                                                    </StackPanel>
+                                                </materialDesign:Card>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </ScrollViewer>
+                            </Grid>
+                        </materialDesign:Card>
                     </Grid>
                 </TabItem>
 
@@ -283,7 +359,7 @@
                         </Grid.RowDefinitions>
 
                         <!--  控制面板  -->
-                        <materialDesign:Card Grid.Row="0" Padding="16">
+                        <materialDesign:Card Grid.Row="0" Padding="16" Style="{DynamicResource ZMCardStyle}">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
@@ -298,13 +374,13 @@
                                 <TextBox
                                     Grid.Column="0"
                                     materialDesign:HintAssist.Hint="起始索引"
-                                    Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+                                    Style="{DynamicResource ZMTextBoxStyle}"
                                     Text="{Binding MultiStartIndex, UpdateSourceTrigger=PropertyChanged}" />
 
                                 <TextBox
                                     Grid.Column="2"
                                     materialDesign:HintAssist.Hint="结束索引"
-                                    Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
+                                    Style="{DynamicResource ZMTextBoxStyle}"
                                     Text="{Binding MultiEndIndex, UpdateSourceTrigger=PropertyChanged}" />
 
                                 <Button
@@ -312,24 +388,21 @@
                                     materialDesign:ButtonAssist.CornerRadius="4"
                                     Command="{Binding GetMultiDICommand}"
                                     Content="读取DI"
-                                    Style="{DynamicResource MaterialDesignRaisedButton}" />
+                                    Style="{DynamicResource ZMPrimaryButtonStyle}" />
 
                                 <Button
                                     Grid.Column="6"
                                     materialDesign:ButtonAssist.CornerRadius="4"
                                     Command="{Binding GetMultiDOCommand}"
                                     Content="读取DO"
-                                    Style="{DynamicResource MaterialDesignOutlinedButton}" />
+                                    Style="{DynamicResource ZMSecondaryButtonStyle}" />
                             </Grid>
                         </materialDesign:Card>
 
                         <!--  批量DO设置按钮组  -->
-                        <materialDesign:Card Grid.Row="4" Padding="16">
+                        <materialDesign:Card Grid.Row="4" Padding="16" Style="{DynamicResource ZMCardStyle}">
                             <StackPanel>
-                                <TextBlock
-                                    Margin="0,0,0,12"
-                                    Style="{DynamicResource MaterialDesignSubtitle1TextBlock}"
-                                    Text="批量DO设置" />
+                                <TextBlock Margin="0,0,0,12" Style="{DynamicResource MaterialDesignSubtitle1TextBlock}" Text="批量DO设置" />
 
                                 <!--  快速操作按钮组  -->
                                 <Grid Margin="0,0,0,12">
@@ -351,57 +424,57 @@
                                     <Button
                                         Grid.Column="0"
                                         materialDesign:ButtonAssist.CornerRadius="4"
-                                        Background="#4CAF50"
+                                        Background="{DynamicResource ZMStatusSuccessBrush}"
                                         Command="{Binding SetAllMultiDOCommand}"
                                         Content="全部置1"
                                         Foreground="White"
-                                        Style="{DynamicResource MaterialDesignOutlinedButton}" />
+                                        Style="{DynamicResource ZMSecondaryButtonStyle}" />
 
                                     <Button
                                         Grid.Column="2"
                                         materialDesign:ButtonAssist.CornerRadius="4"
-                                        Background="#F44336"
+                                        Background="{DynamicResource ZMStatusDangerBrush}"
                                         Command="{Binding ClearAllMultiDOCommand}"
                                         Content="全部清0"
                                         Foreground="White"
-                                        Style="{DynamicResource MaterialDesignOutlinedButton}" />
+                                        Style="{DynamicResource ZMSecondaryButtonStyle}" />
 
                                     <Button
                                         Grid.Column="4"
                                         materialDesign:ButtonAssist.CornerRadius="4"
-                                        Background="#FF9800"
+                                        Background="{DynamicResource ZMStatusWarningBrush}"
                                         Command="{Binding InvertAllMultiDOCommand}"
                                         Content="全部翻转"
                                         Foreground="White"
-                                        Style="{DynamicResource MaterialDesignOutlinedButton}" />
+                                        Style="{DynamicResource ZMSecondaryButtonStyle}" />
 
                                     <Button
                                         Grid.Column="6"
                                         materialDesign:ButtonAssist.CornerRadius="4"
-                                        Background="#9C27B0"
+                                        Background="{DynamicResource ZMTagBrushC}"
                                         Command="{Binding SetOddMultiDOCommand}"
                                         Content="奇数置1"
                                         Foreground="White"
-                                        Style="{DynamicResource MaterialDesignOutlinedButton}" />
+                                        Style="{DynamicResource ZMSecondaryButtonStyle}" />
 
                                     <Button
                                         Grid.Column="8"
                                         materialDesign:ButtonAssist.CornerRadius="4"
-                                        Background="#3F51B5"
+                                        Background="{DynamicResource ZMTagBrushD}"
                                         Command="{Binding SetEvenMultiDOCommand}"
                                         Content="偶数置1"
                                         Foreground="White"
-                                        Style="{DynamicResource MaterialDesignOutlinedButton}" />
+                                        Style="{DynamicResource ZMSecondaryButtonStyle}" />
 
                                     <Button
                                         Grid.Column="10"
                                         materialDesign:ButtonAssist.CornerRadius="4"
-                                        Background="#2196F3"
+                                        Background="{DynamicResource ZMStatusInfoBrush}"
                                         Command="{Binding ApplyMultiDOFromBitsCommand}"
                                         Content="应用到硬件"
                                         FontWeight="Bold"
                                         Foreground="White"
-                                        Style="{DynamicResource MaterialDesignRaisedButton}" />
+                                        Style="{DynamicResource ZMPrimaryButtonStyle}" />
                                 </Grid>
                             </StackPanel>
                         </materialDesign:Card>
@@ -415,12 +488,9 @@
                             </Grid.ColumnDefinitions>
 
                             <!--  DI位状态  -->
-                            <materialDesign:Card Grid.Column="0" Padding="16">
+                            <materialDesign:Card Grid.Column="0" Padding="16" Style="{DynamicResource ZMCardStyle}">
                                 <StackPanel>
-                                    <TextBlock
-                                        Margin="0,0,0,8"
-                                        Style="{DynamicResource MaterialDesignSubtitle1TextBlock}"
-                                        Text="数字输入位状态" />
+                                    <TextBlock Margin="0,0,0,8" Style="{DynamicResource MaterialDesignSubtitle1TextBlock}" Text="数字输入位状态" />
                                     <ScrollViewer MaxHeight="300" VerticalScrollBarVisibility="Auto">
                                         <ItemsControl ItemsSource="{Binding MultiDIBits}">
                                             <ItemsControl.ItemsPanel>
@@ -446,12 +516,9 @@
                             </materialDesign:Card>
 
                             <!--  DO位状态 (可编辑)  -->
-                            <materialDesign:Card Grid.Column="2" Padding="16">
+                            <materialDesign:Card Grid.Column="2" Padding="16" Style="{DynamicResource ZMCardStyle}">
                                 <StackPanel>
-                                    <TextBlock
-                                        Margin="0,0,0,8"
-                                        Style="{DynamicResource MaterialDesignSubtitle1TextBlock}"
-                                        Text="数字输出位状态 (点击切换)" />
+                                    <TextBlock Margin="0,0,0,8" Style="{DynamicResource MaterialDesignSubtitle1TextBlock}" Text="数字输出位状态 (点击切换)" />
                                     <ScrollViewer MaxHeight="300" VerticalScrollBarVisibility="Auto">
                                         <ItemsControl ItemsSource="{Binding MultiDOBits}">
                                             <ItemsControl.ItemsPanel>
@@ -461,15 +528,9 @@
                                             </ItemsControl.ItemsPanel>
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
-                                                    <Border
-                                                        Cursor="Hand"
-                                                        Style="{StaticResource BitIndicatorStyle}"
-                                                        ToolTip="{Binding DisplayText}">
+                                                    <Border Cursor="Hand" Style="{StaticResource BitIndicatorStyle}" ToolTip="{Binding DisplayText}">
                                                         <Border.InputBindings>
-                                                            <MouseBinding
-                                                                Command="{Binding DataContext.ToggleDOBitCommand, RelativeSource={RelativeSource AncestorType=Page}}"
-                                                                CommandParameter="{Binding}"
-                                                                MouseAction="LeftClick" />
+                                                            <MouseBinding Command="{Binding DataContext.ToggleDOBitCommand, RelativeSource={RelativeSource AncestorType=Page}}" CommandParameter="{Binding}" MouseAction="LeftClick" />
                                                         </Border.InputBindings>
                                                         <TextBlock
                                                             HorizontalAlignment="Center"
@@ -498,12 +559,9 @@
                         </Grid.RowDefinitions>
 
                         <!--  控制按钮  -->
-                        <materialDesign:Card Grid.Row="0" Padding="16">
+                        <materialDesign:Card Grid.Row="0" Padding="16" Style="{DynamicResource ZMCardStyle}">
                             <StackPanel>
-                                <TextBlock
-                                    Margin="0,0,0,16"
-                                    Style="{DynamicResource MaterialDesignHeadline6TextBlock}"
-                                    Text="DIDO反转配置" />
+                                <TextBlock Margin="0,0,0,16" Style="{DynamicResource MaterialDesignHeadline6TextBlock}" Text="DIDO反转配置" />
                                 <Button
                                     HorizontalAlignment="Left"
                                     materialDesign:ButtonAssist.CornerRadius="4"
@@ -511,7 +569,7 @@
                                     Command="{Binding ApplyDIDOInverterCommand}"
                                     Content="应用配置到硬件"
                                     Foreground="{DynamicResource PrimaryHueMidForegroundBrush}"
-                                    Style="{DynamicResource MaterialDesignRaisedButton}" />
+                                    Style="{DynamicResource ZMPrimaryButtonStyle}" />
                             </StackPanel>
                         </materialDesign:Card>
 
@@ -524,25 +582,22 @@
                             </Grid.ColumnDefinitions>
 
                             <!--  DI反转配置  -->
-                            <materialDesign:Card Grid.Column="0" Padding="16">
+                            <materialDesign:Card Grid.Column="0" Padding="16" Style="{DynamicResource ZMCardStyle}">
                                 <StackPanel>
                                     <Grid Margin="0,0,0,12">
-                                        <TextBlock
-                                            VerticalAlignment="Center"
-                                            Style="{DynamicResource MaterialDesignSubtitle1TextBlock}"
-                                            Text="数字输入 (DI) 反转" />
+                                        <TextBlock VerticalAlignment="Center" Style="{DynamicResource MaterialDesignSubtitle1TextBlock}" Text="数字输入 (DI) 反转" />
                                         <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
                                             <Button
                                                 Command="{Binding SelectAllDIInverterCommand}"
                                                 CommandParameter="{StaticResource True}"
                                                 Content="全选"
-                                                Style="{DynamicResource MaterialDesignFlatButton}" />
+                                                Style="{DynamicResource ZMFlatButtonStyle}" />
                                             <Button
                                                 Margin="8,0,0,0"
                                                 Command="{Binding SelectAllDIInverterCommand}"
                                                 CommandParameter="{StaticResource False}"
                                                 Content="全不选"
-                                                Style="{DynamicResource MaterialDesignFlatButton}" />
+                                                Style="{DynamicResource ZMFlatButtonStyle}" />
                                         </StackPanel>
                                     </Grid>
                                     <DataGrid
@@ -576,25 +631,22 @@
                             </materialDesign:Card>
 
                             <!--  DO反转配置  -->
-                            <materialDesign:Card Grid.Column="2" Padding="16">
+                            <materialDesign:Card Grid.Column="2" Padding="16" Style="{DynamicResource ZMCardStyle}">
                                 <StackPanel>
                                     <Grid Margin="0,0,0,12">
-                                        <TextBlock
-                                            VerticalAlignment="Center"
-                                            Style="{DynamicResource MaterialDesignSubtitle1TextBlock}"
-                                            Text="数字输出 (DO) 反转" />
+                                        <TextBlock VerticalAlignment="Center" Style="{DynamicResource MaterialDesignSubtitle1TextBlock}" Text="数字输出 (DO) 反转" />
                                         <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
                                             <Button
                                                 Command="{Binding SelectAllDOInverterCommand}"
                                                 CommandParameter="{StaticResource True}"
                                                 Content="全选"
-                                                Style="{DynamicResource MaterialDesignFlatButton}" />
+                                                Style="{DynamicResource ZMFlatButtonStyle}" />
                                             <Button
                                                 Margin="8,0,0,0"
                                                 Command="{Binding SelectAllDOInverterCommand}"
                                                 CommandParameter="{StaticResource False}"
                                                 Content="全不选"
-                                                Style="{DynamicResource MaterialDesignFlatButton}" />
+                                                Style="{DynamicResource ZMFlatButtonStyle}" />
                                         </StackPanel>
                                     </Grid>
                                     <DataGrid
@@ -632,4 +684,5 @@
             </TabControl>
         </Grid>
     </ScrollViewer>
-</Page> 
+</Page>
+

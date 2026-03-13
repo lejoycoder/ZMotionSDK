@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using ZMotionSDK.Models;
 
 namespace ZMotionSDK.Helper;
@@ -95,7 +95,7 @@ public static class BaiscParmNameHelper
     }
 
     /// <summary>
-    /// 根据可读参数枚举值获取中文描述（无反射，高性能）
+    /// 根据可读参数枚举值获取中文描述
     /// </summary>
     /// <param name="paramName">参数枚举值</param>
     /// <returns>中文描述</returns>
@@ -105,7 +105,7 @@ public static class BaiscParmNameHelper
     }
 
     /// <summary>
-    /// 根据可写参数枚举值获取中文描述（无反射，高性能）
+    /// 根据可写参数枚举值获取中文描述
     /// </summary>
     /// <param name="paramName">参数枚举值</param>
     /// <returns>中文描述</returns>
@@ -350,7 +350,7 @@ public static class BaiscParmNameHelper
     }
 
     /// <summary>
-    /// 通用枚举描述获取方法（保持向后兼容）
+    /// 通用枚举描述获取方法
     /// </summary>
     /// <param name="enumValue">枚举值</param>
     /// <returns>描述信息</returns>

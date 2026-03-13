@@ -5,7 +5,6 @@ using System.Windows;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using WPFProject.Share.Model;
 using ZMotionSDK;
 using ZMotionSDK.Helper;
 using ZMotionTest.Models;
@@ -38,7 +37,7 @@ public partial class IOControlViewModel : ObservableObject
         InitializeBitStatusLists();
         InitializeInverterConfigLists();
 
-        WriteBitCommand = new RelayCommand<DataStatusModel<int>>(WriteBit);
+        _writeBitCommand = new RelayCommand<DataStatusModel<int>>(WriteBit);
 
         _protocolBuilder = new ZMotionIOClient<DIProtocol, DOProtocol>
         {
@@ -46,6 +45,7 @@ public partial class IOControlViewModel : ObservableObject
         };
 
         InitDataStatus();
+        ExpressionTestResult = "点击上方按钮开始协议测试，结果会显示在这里。";
 
         _timer = new Timer((state) => UpdateStatus(), null, 0, 300);
     }
@@ -101,11 +101,11 @@ public partial class IOControlViewModel : ObservableObject
     public ObservableCollection<DataStatusModel<int>> ReadDataStatuses { get; set; } = [];
     public ObservableCollection<DataStatusModel<int>> WriteDataStatuses { get; set; } = [];
 
-    private readonly ICommand WriteBitCommand;
+    private readonly ICommand _writeBitCommand;
 
     private readonly ZMotionIOClient<DIProtocol, DOProtocol> _protocolBuilder;
 
-    private Timer _timer;
+    private readonly Timer _timer;
 
     // 协议对象属性
     [ObservableProperty] private DIProtocol currentDIProtocol;
@@ -134,31 +134,48 @@ public partial class IOControlViewModel : ObservableObject
         foreach (var item in addressMapping)
         {
             WriteDataStatuses.Add(new DataStatusModel<int>()
-                { Name = item.Key, Address = item.Value, Visibility = true, Command = WriteBitCommand });
+                { Name = item.Key, Address = item.Value, Visibility = true, Command = _writeBitCommand });
         }
     }
 
     private void UpdateStatus()
     {
-        var diData = _protocolBuilder.ReadDIData();
-        var doData = _protocolBuilder.ReadDOData();
-        Application.Current.Dispatcher.Invoke((Delegate)(() =>
+        if (!_zMotionManager.IsConnected)
         {
-            foreach (var item in ReadDataStatuses)
-            {
-                item.Status = diData[item.Address];
-            }
+            return;
+        }
 
-            foreach (var item in WriteDataStatuses)
+        try
+        {
+            var diData = _protocolBuilder.ReadDIData();
+            var doData = _protocolBuilder.ReadDOData();
+            Application.Current.Dispatcher.Invoke((Delegate)(() =>
             {
-                item.Status = doData[item.Address];
-            }
-        }));
+                foreach (var item in ReadDataStatuses)
+                {
+                    item.Status = diData[item.Address];
+                }
+
+                foreach (var item in WriteDataStatuses)
+                {
+                    item.Status = doData[item.Address];
+                }
+            }));
+        }
+        catch
+        {
+            // 轮询过程中网络可能瞬断，这里忽略异常避免打断UI交互。
+        }
     }
 
     private void WriteBit(DataStatusModel<int>? arg)
     {
-        _protocolBuilder.Write(arg!.Address, !arg.Status);
+        if (arg is null || !_zMotionManager.IsConnected)
+        {
+            return;
+        }
+
+        _protocolBuilder.Write(arg.Address, !arg.Status);
     }
 
     #endregion
@@ -262,6 +279,34 @@ public partial class IOControlViewModel : ObservableObject
         catch (Exception ex)
         {
             ShowMessage($"写入映射失败: {ex.Message}");
+        }
+    }
+
+    [RelayCommand]
+    private void TestAddressReadWrite()
+    {
+        try
+        {
+            if (!_zMotionManager.IsConnected)
+            {
+                ShowMessage("设备未连接");
+                return;
+            }
+
+            const int targetAddress = 0;
+            var before = _protocolBuilder.ReadDO(targetAddress);
+            var after = !before;
+            _protocolBuilder.Write(targetAddress, after);
+            var verify = _protocolBuilder.ReadDO(targetAddress);
+
+            ExpressionTestResult =
+                $"地址 {targetAddress} 测试完成：写入前={before}，写入值={after}，回读值={verify}";
+            ShowMessage("地址读写测试完成");
+        }
+        catch (Exception ex)
+        {
+            ShowMessage($"地址读写测试失败: {ex.Message}");
+            ExpressionTestResult = $"地址读写失败: {ex.Message}";
         }
     }
 
@@ -417,6 +462,7 @@ public partial class IOControlViewModel : ObservableObject
             UpdateBitStatus(result, MultiDOBits, MultiStartIndex);
 
             int activeCount = MultiDOBits.Count(b => b.IsActive);
+            ShowMessage($"多个 DO 读取完成: {activeCount} 个激活");
         }
         catch (Exception ex)
         {
@@ -440,6 +486,7 @@ public partial class IOControlViewModel : ObservableObject
             _zMotionManager.SetDO_Multi(MultiStartIndex, values);
 
             int activeCount = MultiDOBits.Count(b => b.IsActive);
+            ShowMessage($"多个 DO 已应用到硬件: {activeCount}/{MultiDOBits.Count} 个激活");
         }
         catch (Exception ex)
         {
