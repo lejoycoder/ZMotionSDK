@@ -441,4 +441,4 @@ git tag v2.2.1
 git push origin v2.2.1
 ```
 
-请在 GitHub Actions 中确认发布任务成功，再在 [NuGet](https://www.nuget.org/packages/ZMotionSDK) 检查版本是否已完成索引。若策略配置后需要重试，可重新运行失败的工作流。
+请在 GitHub Actions 中确认发布任务成功，再在 [NuGet](https://www.nuget.org/packages/ZMotionSDK) 检查版本是否已完成索引。若策略配置后需要重试，可重新运行失败的工作流。若标签推送未触发任务，也可在 `Publish NuGet` 页面点击 `Run workflow`，在 `tag` 输入已推送的版本标签（例如 `v2.2.1`）。工作流会签出该标签，并检查标签与包版本一致后再发布。

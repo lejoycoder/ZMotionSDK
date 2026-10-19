@@ -1,6 +1,12 @@
 name: Publish NuGet
 
 on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Existing release tag, for example v2.2.1'
+        required: true
+        type: string
   push:
     tags:
       - 'v*'
@@ -16,15 +22,19 @@ jobs:
       id-token: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag || github.ref }}
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
       - name: Check version tag
         shell: pwsh
+        env:
+          RELEASE_TAG: ${{ inputs.tag || github.ref_name }}
         run: |
           $version = ([xml](Get-Content src/ZMotionSDK/ZMotionSDK.csproj)).Project.PropertyGroup.Version
-          if ($env:GITHUB_REF_NAME -ne "v$version") {
-            throw "Tag $env:GITHUB_REF_NAME does not match package version $version"
+          if ($env:RELEASE_TAG -ne "v$version") {
+            throw "Tag $env:RELEASE_TAG does not match package version $version"
           }
       - name: Pack
         run: dotnet pack src/ZMotionSDK/ZMotionSDK.csproj -c Release -p:GeneratePackageOnBuild=false -p:ContinuousIntegrationBuild=true -o artifacts/nuget
