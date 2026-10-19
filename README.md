@@ -208,15 +208,15 @@ if (inputs.StartButton && !inputs.EmergencyStop)
 }
 ```
 
-#### 模拟量 AI/AO 操作（2.2.0 新增）
+#### 模拟量 AI/AO 操作（2.2.1）
 
 | 接口 | 功能 | 底层接口 |
 | --- | --- | --- |
-| `float GetAI(int axis, int ionum)` | 读取模拟量输入通道 | `ZAux_Direct_GetAD` |
-| `float GetAO(int axis, int ionum)` | 读取模拟量输出通道的值 | `ZAux_Direct_GetDA` |
-| `void SetAO(int axis, int ionum, float value)` | 设置模拟量输出通道的值 | `ZAux_Direct_SetDA` |
+| `float GetAI(int ionum)` | 读取模拟量输入通道 | `ZAux_Direct_GetAD` |
+| `float GetAO(int ionum)` | 读取模拟量输出通道的值 | `ZAux_Direct_GetDA` |
+| `void SetAO(int ionum, float value)` | 设置模拟量输出通道的值 | `ZAux_Direct_SetDA` |
 
-三个接口均为同步调用，需要先连接控制器。当前 `axis` 参数未使用，传入 `0` 即可；实际通道由 `ionum` 指定。AI 是输入，当前仅提供读取接口。
+三个接口均为同步调用，需要先连接控制器。`ionum` 指定模拟量通道编号，无需传入轴号。AI 是输入，当前仅提供读取接口。
 
 ```csharp
 using ZMotionSDK;
@@ -225,12 +225,12 @@ var zmotion = new ZMotion();
 zmotion.Open("192.168.1.100", 3000);
 try
 {
-    float input = zmotion.GetAI(axis: 0, ionum: 0);
-    float output = zmotion.GetAO(axis: 0, ionum: 0);
+    float input = zmotion.GetAI(ionum: 0);
+    float output = zmotion.GetAO(ionum: 0);
     Console.WriteLine($"AI[0] = {input}, AO[0] = {output}");
 
     // 确认硬件允许该值后再写入；此处 0 是控制器数值，不代表安全状态。
-    zmotion.SetAO(axis: 0, ionum: 0, value: 0.0f);
+    zmotion.SetAO(ionum: 0, value: 0.0f);
 }
 catch (ZMotionException ex)
 {
@@ -411,14 +411,15 @@ zmotion.BasDown(@"C:\Program\test.bas", BasDownMode.ROM);
 
 ## 📦 版本与发布
 
-### 2.2.0
+### 2.2.1
 
 - 新增 `GetAI`、`GetAO` 和 `SetAO`，支持模拟量输入读取及输出读写。
+- 三个模拟量接口仅需传入通道编号 `ionum`，不含轴号参数。
 - 补充模拟量调用示例、参数含义与量程说明，修正 IOSugar 示例。
 
 ### Trusted Publishing
 
-发布工作流位于 [`.github/workflows/nuget.yml`](.github/workflows/nuget.yml)。推送与项目版本一致的 `v` 前缀标签（例如 `v2.2.0`）后，GitHub Actions 构建 NuGet 包，通过 `NuGet/login` 交换 OIDC 短期凭据并发布，无需保存长期 NuGet API Key。
+发布工作流位于 [`.github/workflows/nuget.yml`](.github/workflows/nuget.yml)。推送与项目版本一致的 `v` 前缀标签（例如 `v2.2.1`）后，GitHub Actions 构建 NuGet 包，通过 `NuGet/login` 交换 OIDC 短期凭据并发布，无需保存长期 NuGet API Key。
 
 首次发布前，NuGet 账号 `lejoyke` 的 Trusted Publishing 策略需配置为：
 
@@ -436,8 +437,8 @@ zmotion.BasDown(@"C:\Program\test.bas", BasDownMode.ROM);
 ```powershell
 dotnet pack src/ZMotionSDK/ZMotionSDK.csproj -c Release -p:GeneratePackageOnBuild=false -o artifacts/nuget
 git push origin main
-git tag v2.2.0
-git push origin v2.2.0
+git tag v2.2.1
+git push origin v2.2.1
 ```
 
 请在 GitHub Actions 中确认发布任务成功，再在 [NuGet](https://www.nuget.org/packages/ZMotionSDK) 检查版本是否已完成索引。若策略配置后需要重试，可重新运行失败的工作流。
