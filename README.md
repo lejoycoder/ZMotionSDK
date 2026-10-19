@@ -1,7 +1,7 @@
 # ZMotionSDK - 专业C#运动控制SDK
 
 [![.NET 8.0](https://img.shields.io/badge/.NET-8.0-blue.svg)](https://dotnet.microsoft.com/download/dotnet/8.0)
-[![版本](https://img.shields.io/badge/版本-1.0.4-green.svg)](https://www.nuget.org/packages/ZMotionSDK)
+[![NuGet](https://img.shields.io/nuget/v/ZMotionSDK.svg)](https://www.nuget.org/packages/ZMotionSDK)
 [![平台](https://img.shields.io/badge/平台-Windows-lightgrey.svg)](https://www.microsoft.com/windows)
 
 ZMotionSDK是一个专业的C#运动控制器软件开发包，为正运动ZMotion系列运动控制器提供完整的编程接口。该SDK基于.NET 8.0开发，提供高性能、易用的工业级运动控制解决方案。
@@ -20,6 +20,7 @@ ZMotionSDK是一个专业的C#运动控制器软件开发包，为正运动ZMoti
 
 ### 📡 完整IO控制系统
 - **数字输入输出**: 高速DI/DO读写操作
+- **模拟输入输出**: 读取 AI、读取和设置 AO，直接访问控制器模拟量通道
 - **批量操作**: 支持多点IO的批量读写，提高效率
 - **信号反转**: 智能信号反转配置，适应不同硬件接线
 - **Modbus支持**: 原生支持Modbus协议的IO操作
@@ -31,15 +32,11 @@ ZMotionSDK是一个专业的C#运动控制器软件开发包，为正运动ZMoti
 - **状态监控**: 实时回零状态监控和异常处理
 
 ### 🔄 IOSugar（协议糖化）框架
-- 类型安全映射：通过 `[Address]` 等特性将硬件地址映射到结构体/类字段，支持基本类型、枚举、嵌套结构和按位域(BitField)映射。
-- 异步读写：提供 `Read*Async` / `Write*Async` 系列方法，支持批量读写、超时与取消令牌，适合 UI 与高并发场景。
-- 自定义转换器：字段级支持 `Converter` 特性，用于值缩放、单位转换或自定义序列化/反序列化逻辑。
-- 校验与默认值：支持在字段上声明默认值与校验属性（例如范围验证），读取时会自动应用并在写入前进行校验。
-- 高性能：内部使用反射缓存 + 表达式树动态编译，读写性能接近手写访问，并支持批量打包以减少通信开销。
-- 线程安全与并发：内部使用并发字典和分段锁策略，支持多线程并发读写和共享构建器实例。
-- 虚拟地址与别名：支持将逻辑字段映射到虚拟地址或别名，便于在不同硬件版本间复用协议定义。
+- 类型安全映射：通过 `[Address]` 将 DI/DO 地址映射到协议结构体的 `bool` 属性。
+- 批量读写与缓存：提供同步 `ReadDI`、`ReadDO`、`Write` 方法，保留最近读取的协议数据和原始数据。
+- 链式写入：使用 `CreateWriteMapping()` 组合多个输出修改，再通过 `Commit()` 提交。
 
-说明：README 中示例已改为异步风格，建议在生产代码中使用取消令牌与错误处理，并根据实际硬件协议为字段添加合适的转换器与校验属性。
+详细用法见 [ZMotionIOClient 使用指南](docs/ZMotionIOClient_Guide.md)。AI/AO 使用下方的 `ZMotion` 接口直接访问。
 
 ### 🛡️ 安全与异常处理
 - **完善的异常体系**: 专门的ZMotionException异常处理
@@ -62,6 +59,8 @@ Install-Package ZMotionSDK
 ```bash
 dotnet add package ZMotionSDK
 ```
+
+运行环境为 Windows 和 .NET 8.0 或更高版本。请将正运动官方提供的、与应用进程位数匹配的 `zauxdll.dll` 和 `zmotion.dll` 放入应用输出目录；当前 NuGet 包不包含这两个原生 DLL。
 
 ### 基础使用示例
 
@@ -166,33 +165,38 @@ zmotion.SetDO_Multi(0, doValues);
 
 #### 协议糖化IO操作
 ```csharp
+using MessageToolkit.Attributes;
+using ZMotionSDK;
+
 // 定义输入协议结构
 public struct DIProtocol
 {
-    [Address(0)] public bool StartButton;
-    [Address(1)] public bool StopButton;
-    [Address(2)] public bool EmergencyStop;
-    [Address(3)] public bool SafetyDoor;
+    [Address(0)] public bool StartButton { get; set; }
+    [Address(1)] public bool StopButton { get; set; }
+    [Address(2)] public bool EmergencyStop { get; set; }
+    [Address(3)] public bool SafetyDoor { get; set; }
 }
 
 // 定义输出协议结构
 public struct DOProtocol
 {
-    [Address(0)] public bool MotorEnable;
-    [Address(1)] public bool AlarmLight;
-    [Address(2)] public bool RunningLight;
-    [Address(3)] public bool CompletedLight;
+    [Address(0)] public bool MotorEnable { get; set; }
+    [Address(1)] public bool AlarmLight { get; set; }
+    [Address(2)] public bool RunningLight { get; set; }
+    [Address(3)] public bool CompletedLight { get; set; }
 }
 
-// 创建 IOSugar 构建器（示例使用异步 API）
-var builder = new ZMotionIOClient<DIProtocol, DOProtocol>();
-builder.ZMotion = zmotion;
+// 创建 IOSugar 客户端，ZMotion 是 required 属性
+var builder = new ZMotionIOClient<DIProtocol, DOProtocol>
+{
+    ZMotion = zmotion
+};
 
-// 异步读取结构化的输入数据（支持批量和按需加载）
-var inputs = await builder.ReadDIAsync();
+// 读取结构化的输入数据
+var inputs = builder.ReadDI();
 if (inputs.StartButton && !inputs.EmergencyStop)
 {
-    // 设置结构化的输出数据并异步写回
+    // 设置结构化的输出数据并写回
     var outputs = new DOProtocol
     {
         MotorEnable = true,
@@ -200,9 +204,45 @@ if (inputs.StartButton && !inputs.EmergencyStop)
         AlarmLight = false,
         CompletedLight = false
     };
-    await builder.WriteAsync(outputs);
+    builder.Write(outputs);
 }
 ```
+
+#### 模拟量 AI/AO 操作（2.2.0 新增）
+
+| 接口 | 功能 | 底层接口 |
+| --- | --- | --- |
+| `float GetAI(int axis, int ionum)` | 读取模拟量输入通道 | `ZAux_Direct_GetAD` |
+| `float GetAO(int axis, int ionum)` | 读取模拟量输出通道的值 | `ZAux_Direct_GetDA` |
+| `void SetAO(int axis, int ionum, float value)` | 设置模拟量输出通道的值 | `ZAux_Direct_SetDA` |
+
+三个接口均为同步调用，需要先连接控制器。当前 `axis` 参数未使用，传入 `0` 即可；实际通道由 `ionum` 指定。AI 是输入，当前仅提供读取接口。
+
+```csharp
+using ZMotionSDK;
+
+var zmotion = new ZMotion();
+zmotion.Open("192.168.1.100", 3000);
+try
+{
+    float input = zmotion.GetAI(axis: 0, ionum: 0);
+    float output = zmotion.GetAO(axis: 0, ionum: 0);
+    Console.WriteLine($"AI[0] = {input}, AO[0] = {output}");
+
+    // 确认硬件允许该值后再写入；此处 0 是控制器数值，不代表安全状态。
+    zmotion.SetAO(axis: 0, ionum: 0, value: 0.0f);
+}
+catch (ZMotionException ex)
+{
+    Console.WriteLine($"模拟量操作失败: {ex.Message}");
+}
+finally
+{
+    zmotion.Close();
+}
+```
+
+通道编号、数值范围、单位及校准方式以控制器/扩展模块手册为准。SDK 原样传递 `float` 数值，不进行电压/电流换算、缩放或限幅；不要将数值直接理解为 V 或 mA。底层接口注释中的 `0–4095` 仅适用于其注明的 4 系列以下产品，不能作为所有设备的统一量程。`GetAO` 返回控制器提供的输出值，不替代外部仪表对实际电压或电流的测量。控制器返回非零错误码时，接口抛出 `ZMotionException`。
 
 ### 3. 运动控制
 
@@ -263,7 +303,7 @@ zmotion.SetSramp(0, 0.1f);             // 设置S曲线参数
 
 // 脉冲参数
 zmotion.SetUnits(0, 1000.0f);          // 设置脉冲当量
-zmotion.SetAxisType(0, AxisType.Pulse);// 设置轴类型
+zmotion.SetAxisType(0, AxisType.脉冲方向方式的步进和伺服);// 设置轴类型
 
 // 安全参数
 zmotion.SetLimit(0, 10000.0f, true);   // 设置正向软限位
@@ -344,12 +384,12 @@ zmotion.BasDown(@"C:\Program\test.bas", BasDownMode.ROM);
 
 1. **分部类设计**: ZMotion类采用分部类设计，将不同功能模块分离
 2. **策略模式**: 不同的运动模式和控制策略
-3. **建造者模式**: MessageBuilder用于构建复杂的IO操作
+3. **建造者模式**: ZMotionIOClient用于构建复杂的IO操作
 4. **工厂模式**: 协议配置和数据映射的创建
 
 ## 🧪 测试与示例
 
-项目包含完整的测试应用程序，位于`Test/ZMotionTest`目录：
+项目包含 WPF 硬件测试应用程序，位于 `tests/ZMotionTest` 目录：
 
 ### 测试应用功能
 - **连接管理**: TCP/IP连接配置和状态监控
@@ -357,7 +397,7 @@ zmotion.BasDown(@"C:\Program\test.bas", BasDownMode.ROM);
 - **IO控制面板**: 数字输入输出的实时控制和监控
 - **参数测试**: 轴参数的配置和实时测试
 - **缓存运动**: 缓存运动指令的管理和执行
-- **协议测试**: ProtocolSugar功能的完整测试
+- **协议测试**: IOSugar 数字 IO 协议测试
 
 ## 📈 性能优化
 
@@ -368,3 +408,36 @@ zmotion.BasDown(@"C:\Program\test.bas", BasDownMode.ROM);
 - **内存优化**: 优化P/Invoke调用，减少内存分配和GC压力
 
 **注意**: 本SDK专为正运动ZMotion系列控制器设计，使用前请确认硬件兼容性。如有技术问题，请参考官方文档或联系技术支持。
+
+## 📦 版本与发布
+
+### 2.2.0
+
+- 新增 `GetAI`、`GetAO` 和 `SetAO`，支持模拟量输入读取及输出读写。
+- 补充模拟量调用示例、参数含义与量程说明，修正 IOSugar 示例。
+
+### Trusted Publishing
+
+发布工作流位于 [`.github/workflows/nuget.yml`](.github/workflows/nuget.yml)。推送与项目版本一致的 `v` 前缀标签（例如 `v2.2.0`）后，GitHub Actions 构建 NuGet 包，通过 `NuGet/login` 交换 OIDC 短期凭据并发布，无需保存长期 NuGet API Key。
+
+首次发布前，NuGet 账号 `lejoyke` 的 Trusted Publishing 策略需配置为：
+
+| 配置项 | 值 |
+| --- | --- |
+| GitHub 仓库所有者 | `lejoycoder` |
+| 仓库 | `ZMotionSDK` |
+| 工作流文件名 | `nuget.yml` |
+| Environment | 留空（工作流未使用 GitHub Environment） |
+| Scopes | `Push only new package versions` |
+| Glob Patterns and Packages | `ZMotionSDK`（仅允许发布该包） |
+
+更新项目文件中的 `Version` 和发布说明后，在仓库根目录执行：
+
+```powershell
+dotnet pack src/ZMotionSDK/ZMotionSDK.csproj -c Release -p:GeneratePackageOnBuild=false -o artifacts/nuget
+git push origin main
+git tag v2.2.0
+git push origin v2.2.0
+```
+
+请在 GitHub Actions 中确认发布任务成功，再在 [NuGet](https://www.nuget.org/packages/ZMotionSDK) 检查版本是否已完成索引。若策略配置后需要重试，可重新运行失败的工作流。

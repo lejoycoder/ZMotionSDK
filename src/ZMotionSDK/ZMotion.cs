@@ -471,6 +471,50 @@ public partial class ZMotion
         }
         return _didoInverterConfig.ProcessNegativeLimitValue(axis, GetDI(_signalIndex_BackwardLimits[axis]));
     }
+
+    /// <summary>
+    /// 获取模拟输入信号
+    /// </summary>
+    /// <param name="axis">当前未使用，传入 0 即可；通道由 ionum 指定</param>
+    /// <param name="ionum">控制器模拟量输入通道编号</param>
+    /// <returns>控制器返回的模拟量值，量程与单位由硬件决定</returns>
+    /// <exception cref="ZMotionException">控制器返回非零错误码</exception>
+    public float GetAI(int axis, int ionum)
+    {
+        float value = 0;
+        var result = zmcaux.ZAux_Direct_GetAD(_handle, ionum, ref value);
+        CheckResult(result);
+        return value;
+    }
+
+    /// <summary>
+    /// 获取模拟输出信号
+    /// </summary>
+    /// <param name="axis">当前未使用，传入 0 即可；通道由 ionum 指定</param>
+    /// <param name="ionum">控制器模拟量输出通道编号</param>
+    /// <returns>控制器返回的模拟量输出值，量程与单位由硬件决定</returns>
+    /// <exception cref="ZMotionException">控制器返回非零错误码</exception>
+    public float GetAO(int axis, int ionum)
+    {
+        float value = 0;
+        var result = zmcaux.ZAux_Direct_GetDA(_handle, ionum, ref value);
+        CheckResult(result);
+        return value;
+    }
+
+    /// <summary>
+    /// 设置模拟输出信号
+    /// </summary>
+    /// <param name="axis">当前未使用，传入 0 即可；通道由 ionum 指定</param>
+    /// <param name="ionum">控制器模拟量输出通道编号</param>
+    /// <param name="value">控制器要求的模拟量值，SDK 不做缩放或限幅</param>
+    /// <exception cref="ZMotionException">控制器返回非零错误码</exception>
+    public void SetAO(int axis, int ionum, float value)
+    {
+        var result = zmcaux.ZAux_Direct_SetDA(_handle, ionum, value);
+        CheckResult(result);
+    }
+
     #endregion
 
     #region 运动控制参数设置

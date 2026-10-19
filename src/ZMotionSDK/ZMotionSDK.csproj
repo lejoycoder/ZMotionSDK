@@ -7,17 +7,17 @@
         <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
         <PackageId>ZMotionSDK</PackageId>
         <Title>ZMotionSDK</Title>
-        <Version>2.1.1</Version>
+        <Version>2.2.0</Version>
         <Authors>Lejoy</Authors>
         <Description>此包为正运动二次开发包,增加了一些协议的帮助类</Description>
         <PackageIcon>ZMotion.png</PackageIcon>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageOutputPath>..\..\doc\nuget</PackageOutputPath>
-        <PackageReleaseNotes>init</PackageReleaseNotes>
+        <PackageReleaseNotes>新增模拟量输入读取 GetAI、模拟量输出读取 GetAO 和输出设置 SetAO；完善使用文档。</PackageReleaseNotes>
         <Platforms>AnyCPU;x64</Platforms>
         <GenerateDocumentationFile>True</GenerateDocumentationFile>
-        <PackageProjectUrl>https://github.com/lejoyke/ZMotionSDK</PackageProjectUrl>
-        <RepositoryUrl>https://github.com/lejoyke/ZMotionSDK</RepositoryUrl>
+        <PackageProjectUrl>https://github.com/lejoycoder/ZMotionSDK</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/lejoycoder/ZMotionSDK</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
