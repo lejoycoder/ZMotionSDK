@@ -7,13 +7,13 @@
         <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
         <PackageId>ZMotionSDK</PackageId>
         <Title>ZMotionSDK</Title>
-        <Version>2.2.1</Version>
+        <Version>2.2.2</Version>
         <Authors>Lejoy</Authors>
         <Description>此包为正运动二次开发包,增加了一些协议的帮助类</Description>
         <PackageIcon>ZMotion.png</PackageIcon>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageOutputPath>..\..\doc\nuget</PackageOutputPath>
-        <PackageReleaseNotes>新增模拟量输入读取 GetAI、模拟量输出读取 GetAO 和输出设置 SetAO，仅需指定通道编号；同步接口文档与示例。</PackageReleaseNotes>
+        <PackageReleaseNotes>修复原生依赖缺失：包含 Windows x64 的 zauxdll.dll 和 zmotion.dll，安装后自动复制到构建和发布目录，无需手动复制。</PackageReleaseNotes>
         <Platforms>AnyCPU;x64</Platforms>
         <GenerateDocumentationFile>True</GenerateDocumentationFile>
         <PackageProjectUrl>https://github.com/lejoycoder/ZMotionSDK</PackageProjectUrl>
@@ -25,12 +25,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <None Update="dll\zauxdll.dll">
-        <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <None Update="dll\*.dll" Pack="True" PackagePath="runtimes/win-x64/native/%(Filename)%(Extension)">
+        <Link>%(Filename)%(Extension)</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       </None>
-      <None Update="dll\zmotion.dll">
-        <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-      </None>
+      <None Update="buildTransitive\ZMotionSDK.targets" Pack="True" PackagePath="buildTransitive/ZMotionSDK.targets" />
       <None Include="..\..\README.md" Pack="True" PackagePath="\" />
       <None Include="..\..\doc\nuget\ZMotion.png" Pack="True" PackagePath="\" />
     </ItemGroup>

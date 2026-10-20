@@ -1,0 +1,10 @@
+<Project>
+  <!-- RID-specific builds copy native assets automatically; portable builds also need them beside the executable. -->
+  <ItemGroup Condition="'$(RuntimeIdentifier)' == ''">
+    <None Include="$(MSBuildThisFileDirectory)..\runtimes\win-x64\native\*.dll"
+          Link="%(Filename)%(Extension)"
+          CopyToOutputDirectory="PreserveNewest"
+          CopyToPublishDirectory="PreserveNewest"
+          Pack="false" />
+  </ItemGroup>
+</Project>

@@ -60,7 +60,15 @@ Install-Package ZMotionSDK
 dotnet add package ZMotionSDK
 ```
 
-运行环境为 Windows 和 .NET 8.0 或更高版本。请将正运动官方提供的、与应用进程位数匹配的 `zauxdll.dll` 和 `zmotion.dll` 放入应用输出目录；当前 NuGet 包不包含这两个原生 DLL。
+运行环境为 Windows x64 和 .NET 8.0 或更高版本。从 **2.2.2** 开始，NuGet 包内置 `zauxdll.dll` 和 `zmotion.dll`，安装后在构建、发布时自动复制到应用输出目录，无需手动复制。通过其他类库间接引用本包时也会生效。直接引用本仓库项目也会自动复制这两个 DLL。
+
+这两个原生 DLL 均为 x64 版本，调用程序必须运行在 x64 进程中；请将项目的平台目标设为 `x64`，或发布时指定 `win-x64`：
+
+```bash
+dotnet publish -c Release -r win-x64 --self-contained false
+```
+
+包中的原生依赖位于 `runtimes/win-x64/native/`。未指定运行时标识符（RID）时，包内的构建规则也会将 DLL 复制到程序目录。当前内置依赖不支持 Windows x86、ARM64 或 Linux 进程。
 
 ### 基础使用示例
 
@@ -411,6 +419,12 @@ zmotion.BasDown(@"C:\Program\test.bas", BasDownMode.ROM);
 
 ## 📦 版本与发布
 
+### 2.2.2
+
+- 修复 NuGet 包未包含原生依赖的问题，内置 Windows x64 的 `zauxdll.dll` 和 `zmotion.dll`。
+- 构建、发布时自动将原生 DLL 复制到程序目录，支持直接和间接 NuGet 引用，以及仓库内的项目引用。
+- 明确运行环境和进程架构要求，无需调用方手动复制 DLL。
+
 ### 2.2.1
 
 - 新增 `GetAI`、`GetAO` 和 `SetAO`，支持模拟量输入读取及输出读写。
@@ -419,7 +433,7 @@ zmotion.BasDown(@"C:\Program\test.bas", BasDownMode.ROM);
 
 ### Trusted Publishing
 
-发布工作流位于 [`.github/workflows/nuget.yml`](.github/workflows/nuget.yml)。推送与项目版本一致的 `v` 前缀标签（例如 `v2.2.1`）后，GitHub Actions 构建 NuGet 包，通过 `NuGet/login` 交换 OIDC 短期凭据并发布，无需保存长期 NuGet API Key。
+发布工作流位于 [`.github/workflows/nuget.yml`](.github/workflows/nuget.yml)。推送与项目版本一致的 `v` 前缀标签（例如 `v2.2.2`）后，GitHub Actions 构建 NuGet 包，通过 `NuGet/login` 交换 OIDC 短期凭据并发布，无需保存长期 NuGet API Key。普通代码推送不会发布新包。
 
 首次发布前，NuGet 账号 `lejoyke` 的 Trusted Publishing 策略需配置为：
 
@@ -437,8 +451,8 @@ zmotion.BasDown(@"C:\Program\test.bas", BasDownMode.ROM);
 ```powershell
 dotnet pack src/ZMotionSDK/ZMotionSDK.csproj -c Release -p:GeneratePackageOnBuild=false -o artifacts/nuget
 git push origin main
-git tag v2.2.1
-git push origin v2.2.1
+git tag v2.2.2
+git push origin v2.2.2
 ```
 
-请在 GitHub Actions 中确认发布任务成功，再在 [NuGet](https://www.nuget.org/packages/ZMotionSDK) 检查版本是否已完成索引。若策略配置后需要重试，可重新运行失败的工作流。若标签推送未触发任务，也可在 `Publish NuGet` 页面点击 `Run workflow`，在 `tag` 输入已推送的版本标签（例如 `v2.2.1`）。工作流会签出该标签，并检查标签与包版本一致后再发布。
+请在 GitHub Actions 中确认发布任务成功，再在 [NuGet](https://www.nuget.org/packages/ZMotionSDK) 检查版本是否已完成索引。若策略配置后需要重试，可重新运行失败的工作流。若标签推送未触发任务，也可在 `Publish NuGet` 页面点击 `Run workflow`，在 `tag` 输入已推送的版本标签（例如 `v2.2.2`）。工作流会签出该标签，并检查标签与包版本一致后再发布。
