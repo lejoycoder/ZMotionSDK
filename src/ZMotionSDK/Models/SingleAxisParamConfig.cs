@@ -1,4 +1,4 @@
-﻿namespace ZMotionSDK.Models;
+namespace ZMotionSDK.Models;
 
 public class StageSpeedParam
 {
