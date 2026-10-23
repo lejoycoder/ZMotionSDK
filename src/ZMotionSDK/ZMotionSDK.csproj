@@ -7,13 +7,13 @@
         <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
         <PackageId>ZMotionSDK</PackageId>
         <Title>ZMotionSDK</Title>
-        <Version>2.2.2</Version>
+        <Version>2.2.3</Version>
         <Authors>Lejoy</Authors>
         <Description>此包为正运动二次开发包,增加了一些协议的帮助类</Description>
         <PackageIcon>ZMotion.png</PackageIcon>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageOutputPath>..\..\doc\nuget</PackageOutputPath>
-        <PackageReleaseNotes>修复原生依赖缺失：包含 Windows x64 的 zauxdll.dll 和 zmotion.dll，安装后自动复制到构建和发布目录，无需手动复制。</PackageReleaseNotes>
+        <PackageReleaseNotes>修复回零、正限位和负限位DI索引为-1时的读取错误，直接返回false并跳过反转；GetDI拒绝负数索引并提供明确的参数错误提示。</PackageReleaseNotes>
         <Platforms>AnyCPU;x64</Platforms>
         <GenerateDocumentationFile>True</GenerateDocumentationFile>
         <PackageProjectUrl>https://github.com/lejoycoder/ZMotionSDK</PackageProjectUrl>

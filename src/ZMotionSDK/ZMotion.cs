@@ -132,10 +132,14 @@ public partial class ZMotion
     /// <summary>
     /// 获取数字输入
     /// </summary>
-    /// <param name="index">输入索引</param>
+    /// <param name="index">输入索引，必须大于或等于0</param>
     /// <returns>输入状态</returns>
+    /// <exception cref="ArgumentOutOfRangeException">输入索引为负数</exception>
     public bool GetDI(int index)
     {
+        if (index < 0)
+            throw new ArgumentOutOfRangeException(nameof(index), index, "DI输入索引不能为负数，必须大于或等于0。");
+
         uint value = 0;
         var result = zmcaux.ZAux_Direct_GetIn(_handle, index, ref value);
         CheckResult(result);
@@ -434,42 +438,51 @@ public partial class ZMotion
     /// 获取零点信号DI
     /// </summary>
     /// <param name="axis">轴号</param>
-    /// <returns>回零信号DI</returns>
+    /// <returns>回零信号DI；输入索引为-1时返回false，不读取DI或进行信号反转</returns>
     public bool GetDI_Home(int axis)
     {
-        if (!_signalIndex_Homes.ContainsKey(axis))
+        if (!_signalIndex_Homes.TryGetValue(axis, out var index))
         {
-            GetDIIndex_Home(axis);
+            index = GetDIIndex_Home(axis);
         }
-        return _didoInverterConfig.ProcessHomeSignalValue(axis, GetDI(_signalIndex_Homes[axis]));
+        if (index == -1)
+            return false;
+
+        return _didoInverterConfig.ProcessHomeSignalValue(axis, GetDI(index));
     }
 
     /// <summary>
     /// 获取轴正限位信号DI
     /// </summary>
     /// <param name="axis">轴号</param>
-    /// <returns>正限位信号DI</returns>
+    /// <returns>正限位信号DI；输入索引为-1时返回false，不读取DI或进行信号反转</returns>
     public bool GetDI_ForwardLimit(int axis)
     {
-        if (!_signalIndex_ForwardLimits.ContainsKey(axis))
+        if (!_signalIndex_ForwardLimits.TryGetValue(axis, out var index))
         {
-            GetDIIndex_ForwardLimit(axis);
+            index = GetDIIndex_ForwardLimit(axis);
         }
-        return _didoInverterConfig.ProcessPositiveLimitValue(axis, GetDI(_signalIndex_ForwardLimits[axis]));
+        if (index == -1)
+            return false;
+
+        return _didoInverterConfig.ProcessPositiveLimitValue(axis, GetDI(index));
     }
 
     /// <summary>
     /// 获取轴负限位信号DI
     /// </summary>
     /// <param name="axis">轴号</param>
-    /// <returns>负限位信号DI</returns>
+    /// <returns>负限位信号DI；输入索引为-1时返回false，不读取DI或进行信号反转</returns>
     public bool GetDI_BackwardLimit(int axis)
     {
-        if (!_signalIndex_BackwardLimits.ContainsKey(axis))
+        if (!_signalIndex_BackwardLimits.TryGetValue(axis, out var index))
         {
-            GetDIIndex_BackwardLimit(axis);
+            index = GetDIIndex_BackwardLimit(axis);
         }
-        return _didoInverterConfig.ProcessNegativeLimitValue(axis, GetDI(_signalIndex_BackwardLimits[axis]));
+        if (index == -1)
+            return false;
+
+        return _didoInverterConfig.ProcessNegativeLimitValue(axis, GetDI(index));
     }
 
     /// <summary>

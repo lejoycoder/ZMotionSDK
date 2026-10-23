@@ -171,6 +171,10 @@ bool[] doValues = { true, false, true, false };
 zmotion.SetDO_Multi(0, doValues);
 ```
 
+`GetDI(index)` 要求索引大于或等于 0；负数会在访问控制器之前抛出 `ArgumentOutOfRangeException`，异常包含参数名、实际值和中文错误提示。非负索引是否可用由控制器决定。
+
+`GetDI_Home(axis)`、`GetDI_ForwardLimit(axis)` 和 `GetDI_BackwardLimit(axis)` 在对应 DI 索引为 `-1`（未配置）时直接返回 `false`，不读取 DI 状态，也不应用信号反转。其他负数索引会由 `GetDI` 拒绝。
+
 #### 协议糖化IO操作
 ```csharp
 using MessageToolkit.Attributes;
@@ -419,6 +423,11 @@ zmotion.BasDown(@"C:\Program\test.bas", BasDownMode.ROM);
 
 ## 📦 版本与发布
 
+### 2.2.3
+
+- 回零、正限位和负限位的 DI 索引为 `-1` 时直接返回 `false`，跳过 DI 读取和信号反转。
+- `GetDI` 在访问控制器前校验负数索引，并抛出包含参数名、实际值和中文提示的 `ArgumentOutOfRangeException`。
+
 ### 2.2.2
 
 - 修复 NuGet 包未包含原生依赖的问题，内置 Windows x64 的 `zauxdll.dll` 和 `zmotion.dll`。
@@ -451,8 +460,8 @@ zmotion.BasDown(@"C:\Program\test.bas", BasDownMode.ROM);
 ```powershell
 dotnet pack src/ZMotionSDK/ZMotionSDK.csproj -c Release -p:GeneratePackageOnBuild=false -o artifacts/nuget
 git push origin main
-git tag v2.2.2
-git push origin v2.2.2
+git tag v2.2.3
+git push origin v2.2.3
 ```
 
 请在 GitHub Actions 中确认发布任务成功，再在 [NuGet](https://www.nuget.org/packages/ZMotionSDK) 检查版本是否已完成索引。若策略配置后需要重试，可重新运行失败的工作流。若标签推送未触发任务，也可在 `Publish NuGet` 页面点击 `Run workflow`，在 `tag` 输入已推送的版本标签（例如 `v2.2.2`）。工作流会签出该标签，并检查标签与包版本一致后再发布。
